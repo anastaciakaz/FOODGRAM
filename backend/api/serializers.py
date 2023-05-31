@@ -243,12 +243,11 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
             recipe.save()
-        for ingredient in ingredients:
-            IngredientQuantity.objects.create(
-                recipe=recipe,
-                ingredient_id=ingredient.get('id'),
-                quantity=ingredient.get('quantity')
-            )
+        IngredientQuantity.objects.bulk_create([IngredientQuantity(
+            recipe=recipe,
+            ingredient_id=ingredient.get('id'),
+            quantity=ingredient.get('quantity')
+        ) for ingredient in ingredients])
 
     def create(self, validated_data):
         """Метод переодпределния создания рецепта."""

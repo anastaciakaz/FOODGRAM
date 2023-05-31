@@ -5,6 +5,9 @@ from django.db import models
 class User(AbstractUser):
     """Модель пользователя."""
 
+    REQUIRED_FIELDS = ['password', 'email',
+                       'first_name', 'last_name']
+
     ADMIN = 'admin'
     ANONYMOUS_USER = 'anonymous_user'
     USER = 'user'
@@ -55,9 +58,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-    REQUIRED_FIELDS = ['password', 'email',
-                       'first_name', 'last_name']
 
     @property
     def is_admin(self):

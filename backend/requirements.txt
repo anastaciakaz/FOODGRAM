@@ -13,3 +13,6 @@ isort==5.11.4
 Pillow==9.5.0
 webcolors==1.13
 reportlab==4.0.0
+django-split-settings==1.2.0
+python-dotenv==1.0.0
+python-decouple==3.8
