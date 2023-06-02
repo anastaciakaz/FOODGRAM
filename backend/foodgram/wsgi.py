@@ -12,6 +12,6 @@ import os
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                      'foodgram.settings.split_settings.py')
+                      'foodgram.settings.split_settings')
 
 application = get_wsgi_application()
