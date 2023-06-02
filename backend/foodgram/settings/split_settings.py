@@ -1,9 +1,19 @@
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
 from split_settings.tools import include
-from decouple import config
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+load_dotenv(os.path.join(BASE_DIR.parent.parent.parent,
+                         'foodgram-project-react/infra/.env'),
+            verbose=True)
 
 include('base.py')
 
-if 'dev' == config('DJANGO_ENV'):
+if 'dev' == os.getenv('DJANGO_ENV'):
     include('development.py')
-if 'prod' == config('DJANGO_ENV'):
+if 'prod' == os.getenv('DJANGO_ENV'):
     include('production.py')
