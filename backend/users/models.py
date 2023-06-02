@@ -52,6 +52,11 @@ class User(AbstractUser):
         verbose_name='Роль'
     )
 
+    is_active = models.BooleanField(
+        verbose_name='Активирован',
+        default=True,
+    )
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -67,20 +72,20 @@ class User(AbstractUser):
         )
 
 
-class Follow(models.Model):
+class Subscriptions(models.Model):
     """Модель подписки."""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='follower',
+        related_name='subscriptions',
         verbose_name='Подписчик'
     )
 
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='following',
+        related_name='subscribers',
         verbose_name='Подписки'
     )
 
@@ -90,6 +95,6 @@ class Follow(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'author'],
-                name='unique follow'
+                name='unique subscription'
             )
         ]

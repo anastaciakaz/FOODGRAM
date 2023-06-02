@@ -1,4 +1,3 @@
-import webcolors
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -7,7 +6,8 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
                            ShoppingCart, Tag)
-from users.models import Follow, User
+from users.models import Subscriptions, User
+from api.fields import Hex2NameColor
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -49,23 +49,7 @@ class UserSerializer(UserSerializer):
         user = self.context.get('request').user
         if user.is_anonymous:
             return False
-        return Follow.objects.filter(user=user, author=obj).exists()
-
-
-class Hex2NameColor(serializers.Field):
-    """
-    Класс для создания нового типа поля с цветом в формате hex
-    при описании тегов.
-    """
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        try:
-            data = webcolors.hex_to_name(data)
-        except ValueError:
-            raise serializers.ValidationError('Для этого цвета нет имени')
-        return data
+        return Subscriptions.objects.filter(user=user, author=obj).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -77,6 +61,7 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
+        read_only_fields = '__all__'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -139,18 +124,19 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tag = TagSerializer(read_only=False, many=True)
     author = UserSerializer(read_only=True, many=False)
     ingredients = IngredientSerializer(many=True)
-    is_favorite = SerializerMethodField()
+    is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = (
             'id', 'name', 'author', 'tags', 'ingrediants', 'image',
-            'description', 'pub_date', 'cooking_time', 'is_favorite',
+            'description', 'pub_date', 'cooking_time', 'is_favorited',
             'is_in_the_shopping_cart'
         )
 
-    def get_is_favorite(self, obj):
+    def get_is_favorited(self, obj):
         """
         Метод для определения находится ли рецепт у аутентифицированного
         пользователя в списке любимых рецептов.
@@ -269,7 +255,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         )
 
 
-class FollowSerializer(serializers.ModelSerializer):
+class SubscriptionsSerializer(serializers.ModelSerializer):
     """Сериализатор для получения списка подписок."""
 
     is_subscribed = serializers.SerializerMethodField()
@@ -289,7 +275,9 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         """Статус подписки на автора."""
         user = self.context.get('request').user
-        return Follow.objects.filter(user=user, author=obj.author).exists()
+        return Subscriptions.objects.filter(
+            user=user, author=obj.author
+        ).exists()
 
     def get_recipes(self, obj):
         """Получение списка рецептов автора."""

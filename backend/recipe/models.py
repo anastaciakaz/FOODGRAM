@@ -1,12 +1,9 @@
-from django.contrib.auth import get_user_model
 from django.core import validators
 from django.db import models
+from users.models import User
 
 MIN_VALUE_COOKING_TIME = 1
 MIN_VALUE_INGREDIENT_QUANTITY = 1
-
-
-User = get_user_model()
 
 
 class Tag(models.Model):

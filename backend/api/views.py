@@ -14,12 +14,12 @@ from api.filters import IngredientFilter, RecipeFilter
 from api.mixins import ListRetriveViewSet
 from api.pagination import CustomPageNumberPagination
 from api.permissions import AuthorPermission
-from api.serializers import (FollowSerializer, IngredientSerializer,
+from api.serializers import (SubscriptionsSerializer, IngredientSerializer,
                              RecipeCreateSerializer, RecipeReadSerializer,
                              TagSerializer, UserSerializer)
 from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
                            ShoppingCart, Tag)
-from users.models import Follow, User
+from users.models import Subscriptions, User
 
 
 class CustomUserViewSet(UserViewSet):
@@ -36,12 +36,12 @@ class CustomUserViewSet(UserViewSet):
         )
     def subscriptions(self, request):
         """Получение списка подписок."""
-        queryset = Follow.objects.filter(
-            following__user=request.user
+        queryset = Subscriptions.objects.filter(
+            subscribers__user=request.user
         )
         page = self.paginate_queryset(queryset)
         if page is not None:
-            serializer = FollowSerializer(
+            serializer = SubscriptionsSerializer(
                 page,
                 many=True,
                 context={'request': request}
@@ -62,19 +62,19 @@ class CustomUserViewSet(UserViewSet):
                     {'error_message': 'Нельзя подписаться на самого себя'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            if Follow.objects.filter(user=request.user, author=author):
+            if Subscriptions.objects.filter(user=request.user, author=author):
                 return Response(
                     {'error_message': f'Вы уже подписаны на {author}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            follower = Follow.objects.create(user=request.user, author=author)
-            serializer = FollowSerializer(
-                follower, context={'request': request}
+            subscriber = Subscriptions.objects.create(user=request.user, author=author)
+            serializer = SubscriptionsSerializer(
+                subscriber, context={'request': request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        Follow.objects.filter(user=request.user, author=author).exists()
-        follower = get_object_or_404(Follow, user=request.user, author=author)
-        follower.delete()
+        Subscriptions.objects.filter(user=request.user, author=author).exists()
+        subscriber = get_object_or_404(Subscriptions, user=request.user, author=author)
+        subscriber.delete()
         return Response(
             {'message': f'Подписка на {author} отменена'}
         )
