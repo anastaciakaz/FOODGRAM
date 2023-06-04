@@ -2,6 +2,8 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
+                           ShoppingCart, Tag)
 from reportlab.pdfgen import canvas
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -9,6 +11,8 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
+from users.models import Subscriptions, User
+
 from api.filters import IngredientFilter, RecipeFilter
 from api.mixins import ListRetriveViewSet
 from api.pagination import CustomPageNumberPagination
@@ -16,9 +20,6 @@ from api.permissions import AuthorPermission
 from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              RecipeReadSerializer, SubscriptionsSerializer,
                              TagSerializer, UserSerializer)
-from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
-                           ShoppingCart, Tag)
-from users.models import Subscriptions, User
 
 
 class CustomUserViewSet(UserViewSet):
@@ -153,18 +154,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Добавление и удаление рецептов из избранного."""
         if request.method == 'GET':
             return self.add_recipe(Favorite, request.user, id)
-        else:
-            return self.delete_recipe(Favorite, request.user, id)
+        return self.delete_recipe(Favorite, request.user, id)
 
     @action(detail=True,
             methods=['post', 'delete'],
             permission_classes=(IsAuthenticated, ))
     def shopping_cart(self, request, id=None):
         """Добавление и удаление рецептов из корзины."""
-        if request.method == 'POST':
+        if request.method == 'GET':
             return self.add_recipe(ShoppingCart, request.user, id)
-        else:
-            return self.delete_recipe(ShoppingCart, request.user, id)
+        return self.delete_recipe(ShoppingCart, request.user, id)
 
     @action(detail=False,
             methods=['get'],
