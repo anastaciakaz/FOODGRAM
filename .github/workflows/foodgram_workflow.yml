@@ -22,7 +22,7 @@ jobs:
   
       - name: Test with flake8
         run: |
-          flake8 --ignore=E501 backend/foodgram/settings/base.py/
+          flake8 --ignore=E501 backend/foodgram/settings/
           flake8 --ignore=E501 backend/recipe/migrations/
           flake --ignore=E501 backend/users/migrations/
           python -m flake8 backend
