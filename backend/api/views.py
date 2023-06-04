@@ -12,7 +12,6 @@ from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from users.models import Subscriptions, User
-
 from api.filters import IngredientFilter, RecipeFilter
 from api.mixins import ListRetriveViewSet
 from api.pagination import CustomPageNumberPagination
@@ -67,13 +66,17 @@ class CustomUserViewSet(UserViewSet):
                     {'error_message': f'Вы уже подписаны на {author}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            subscriber = Subscriptions.objects.create(user=request.user, author=author)
+            subscriber = Subscriptions.objects.create(
+                user=request.user, author=author
+            )
             serializer = SubscriptionsSerializer(
                 subscriber, context={'request': request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         Subscriptions.objects.filter(user=request.user, author=author).exists()
-        subscriber = get_object_or_404(Subscriptions, user=request.user, author=author)
+        subscriber = get_object_or_404(
+            Subscriptions, user=request.user, author=author
+        )
         subscriber.delete()
         return Response(
             {'message': f'Подписка на {author} отменена'}
@@ -152,9 +155,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return self.add_recipe(Favorite, request.user, id)
         elif request.method == 'DELETE':
             return self.delete_recipe(Favorite, request.user, id)
-        return Response(
-            {'error_message': 'Список избранных рецептов не найден'}
-        )
+        else:
+            return Response(
+                {'error_message': 'Список избранных рецептов не найден'}
+            )
 
     @action(detail=True,
             methods=['post', 'delete'],
