@@ -22,9 +22,9 @@ jobs:
   
       - name: Test with flake8
         run: |
-          flake8 --ignore=E501 backend/foodgram/settings/
-          flake8 --ignore=E501 backend/recipe/migrations/
-          flake --ignore=E501 backend/users/migrations/
+          python -m flake8 --ignore=E501 backend/foodgram/settings/
+          python -m flake8 --ignore=E501 backend/recipe/migrations/
+          python -m flake --ignore=E501 backend/users/migrations/
           python -m flake8 backend
 
     build_and_push_backend_to_docker_hub:        
