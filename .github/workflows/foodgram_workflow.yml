@@ -1,13 +1,7 @@
 # .github/workflows/**foodgram_workflow.yml**
 name: foodgram_workflow
 
-on: 
-  push:
-    paths-ignore:
-      - 'migrations'
-      - 'base.py'
-    branches:
-      - master
+on: [push]
 
 
 jobs:
@@ -28,6 +22,9 @@ jobs:
   
       - name: Test with flake8
         run: |
+          flake8 --ignore=E501 backend/foodgram/settings/base.py/
+          flake8 --ignore=E501 backend/recipe/migrations/
+          flake --ignore=E501 backend/users/migrations/
           python -m flake8 backend
 
     build_and_push_backend_to_docker_hub:        
