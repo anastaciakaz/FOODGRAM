@@ -9,9 +9,6 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from users.models import Subscriptions, User
-from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
-                           ShoppingCart, Tag)
 from api.filters import IngredientFilter, RecipeFilter
 from api.mixins import ListRetriveViewSet
 from api.pagination import CustomPageNumberPagination
@@ -19,6 +16,9 @@ from api.permissions import AuthorPermission
 from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              RecipeReadSerializer, SubscriptionsSerializer,
                              TagSerializer, UserSerializer)
+from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
+                           ShoppingCart, Tag)
+from users.models import Subscriptions, User
 
 
 class CustomUserViewSet(UserViewSet):
