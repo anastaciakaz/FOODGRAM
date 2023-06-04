@@ -22,8 +22,7 @@ jobs:
   
       - name: Test with flake8
         run: |
-          flake8 --exclude=migrations
-          flake8 --exclude=settings
+          flake8 --exclude=migrations,settings
           python -m flake8 backend
 
     build_and_push_backend_to_docker_hub:        
