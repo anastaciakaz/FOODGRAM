@@ -87,6 +87,7 @@ jobs:
                 sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_front:latest
                 sudo docker-compose stop
                 sudo docker-compose rm backend
+                rm .env
                 touch .env
                 sudo echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
                 sudo echo DEBUG=${{ secrets.DEBUG_VAR_F }} >> .env
