@@ -11,7 +11,7 @@ load_dotenv(os.path.join(BASE_DIR.parent.parent.parent,
 
 DEBUG = os.getenv('DEBUG_VAR_F')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['158.160.35.159', 'foodgram-projreact.ddns.net']
 
 DATABASES = {
     'default': {
