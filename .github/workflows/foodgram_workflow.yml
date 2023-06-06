@@ -23,7 +23,7 @@ jobs:
       - name: Test with flake8
         run: |
           flake8 --exclude=migrations,settings
-          python -m flake8 backend
+          
 
     build_and_push_backend_to_docker_hub:        
       name: Push Docker image to Docker Hub
@@ -84,7 +84,7 @@ jobs:
               key: ${{ secrets.SSH_KEY }}
               passphrase: ${{ secrets.PASSPHRASE }}
               script: |
-                cd infa
+                cd infra
                 sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_back:latest
                 sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_front:latest
                 sudo docker-compose stop
