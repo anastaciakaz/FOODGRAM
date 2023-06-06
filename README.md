@@ -8,6 +8,8 @@
 - Docker-compose
 - Nginx
 
+[![foodgram_workflow](https://github.com/anastaciakaz/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=master)](https://github.com/anastaciakaz/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
+
 ## Проект доступен по ссылке:
 
 ``` foodgram-projreact.ddns.net ```
