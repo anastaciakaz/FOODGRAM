@@ -154,10 +154,14 @@ DJOSER = {
         'user': 'api.serializers.UserSerializer',
         'current_user': 'api.serializers.UserSerializer',
         'user_list': 'api.serializers.UserSerializer',
-        'set_password': 'djoser.serializers.SetPasswordSerializer'
+        'set_password': 'djoser.serializers.SetPasswordSerializer',
     },
     'PERMISSIONS': {
         'user': ('rest_framework.permissions.AllowAny',),
-        'user_list': ('rest_framework.permissions.AllowAny',)
+        'user_list': ('rest_framework.permissions.AllowAny',),
+        'token_create': ('rest_framework.permissions.AllowAny'),
+        'set_username': ('djoser.permissions.CurrentUserOrAdmin'),
+        'user_delete': ('djoser.permissions.CurrentUserOrAdmin'),
+        'set_password': ('djoser.permissions.CurrentUserOrAdmin'),
     }
 }
