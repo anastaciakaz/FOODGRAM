@@ -10,9 +10,13 @@
 
 [![foodgram_workflow](https://github.com/anastaciakaz/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=master)](https://github.com/anastaciakaz/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
 
-## Проект доступен по ссылке:
+## Проект доступен по ссылкам:
 
-``` foodgram-projreact.ddns.net ```
+``` foodgram-projreact.ddns.net ``` 
+
+```http://158.160.105.204/```
+```http://158.160.105.204/admin/```
+```http://158.160.105.204/api/docs```
 
 ## Подготовка и запуск проекта
 Склонировать репозиторий на локально:
