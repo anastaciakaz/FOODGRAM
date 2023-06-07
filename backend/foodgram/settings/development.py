@@ -13,7 +13,7 @@ load_dotenv(os.path.join(BASE_DIR.parent.parent.parent,
 
 
 DEBUG = os.getenv('DEBUG_VAR')
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
