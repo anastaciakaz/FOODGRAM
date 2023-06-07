@@ -1,5 +1,4 @@
 from api.fields import Hex2NameColor
-from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
@@ -7,9 +6,7 @@ from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator
-from users.models import Subscriptions
-
-User = get_user_model()
+from users.models import Subscriptions, User
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):

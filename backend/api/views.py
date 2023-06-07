@@ -5,7 +5,6 @@ from api.permissions import AuthorPermission
 from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              RecipeReadSerializer, SubscriptionsSerializer,
                              TagSerializer, UserSerializer)
-from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -19,9 +18,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from users.models import Subscriptions
-
-User = get_user_model()
+from users.models import Subscriptions, User
 
 
 class CustomUserViewSet(UserViewSet):
