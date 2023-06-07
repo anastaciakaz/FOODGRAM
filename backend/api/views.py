@@ -111,7 +111,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Определение класса сериализатора в зависимости от запроса."""
-        if self.action in ('list', 'retrieve'):
+        if self.request.method == 'GET':
             return RecipeReadSerializer
         return RecipeCreateSerializer
 
@@ -121,6 +121,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         информации при создании нового объекта
         """
         serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
     def add_recipe(self, model, user, id):
         """Метод добавления рецепта."""
