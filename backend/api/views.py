@@ -8,6 +8,7 @@ from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet
 from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
                            ShoppingCart, Tag)
@@ -18,7 +19,10 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from users.models import Subscriptions, User
+from users.models import Subscriptions
+
+
+User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):
