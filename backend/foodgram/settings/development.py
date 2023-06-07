@@ -11,8 +11,6 @@ load_dotenv(os.path.join(BASE_DIR.parent.parent.parent,
                          'foodgram-project-react/infra/.env'),
             verbose=True)
 
-DEBUG = os.getenv('DEBUG_VAR_F')
-
 
 DEBUG = os.getenv('DEBUG_VAR')
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
