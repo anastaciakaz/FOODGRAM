@@ -9,7 +9,6 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from users.models import Subscriptions
 
-
 User = get_user_model()
 
 
