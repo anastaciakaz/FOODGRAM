@@ -1,75 +1,7 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 from django.db import models
 
-
-class User(AbstractUser):
-    """Модель пользователя."""
-
-    REQUIRED_FIELDS = ['password', 'email',
-                       'first_name', 'last_name']
-
-    ADMIN = 'admin'
-    ANONYMOUS_USER = 'anonymous_user'
-    USER = 'user'
-    ROLES = [
-        (ADMIN, 'Администратор'),
-        (ANONYMOUS_USER, 'Гость'),
-        (USER, 'Пользователь'),
-    ]
-
-    username = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name='Имя пользователя'
-    )
-
-    email = models.CharField(
-        max_length=100,
-        unique=True,
-        verbose_name='Адрес электронной почты'
-    )
-
-    password = models.CharField(
-        max_length=30,
-        unique=True,
-        verbose_name='Пароль'
-    )
-
-    last_name = models.CharField(
-        max_length=100,
-        verbose_name='Фамилия'
-    )
-
-    first_name = models.CharField(
-        max_length=100,
-        verbose_name='Имя'
-    )
-
-    role = models.CharField(
-        max_length=max(len(value) for value, _ in ROLES),
-        choices=ROLES,
-        default=USER,
-        verbose_name='Роль'
-    )
-
-    is_active = models.BooleanField(
-        verbose_name='Активирован',
-        default=True,
-    )
-
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-    def __str__(self):
-        return self.username
-
-    @property
-    def is_admin(self):
-        return (
-            self.role == self.ADMIN
-            or self.is_staff
-        )
+User = get_user_model()
 
 
 class Subscriptions(models.Model):

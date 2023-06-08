@@ -1,35 +1,48 @@
 from api.fields import Hex2NameColor
+from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from rest_framework.validators import UniqueTogetherValidator
-from users.models import Subscriptions, User
+from rest_framework.validators import (UniqueTogetherValidator,
+                                       UniqueValidator)
+from users.models import Subscriptions
+
+User = get_user_model()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
     """Кастомный сериализатор для регистрации пользователя."""
 
+    email = serializers.EmailField(
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all()
+            )
+        ]
+    )
+    username = serializers.CharField(
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all()
+            )
+        ]
+    )
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
     class Meta:
         model = User
         fields = (
-            'email', 'username', 'first_name', 'last_name',
-            'password'
+            'email',
+            'id',
+            'password',
+            'username',
+            'first_name',
+            'last_name',
         )
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
 
 
 class UserSerializer(UserSerializer):

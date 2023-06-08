@@ -1,6 +1,8 @@
 from django.core import validators
+from django.contrib.auth import get_user_model
 from django.db import models
-from users.models import User
+
+User = get_user_model()
 
 MIN_VALUE_COOKING_TIME = 1
 MIN_VALUE_INGREDIENT_QUANTITY = 1

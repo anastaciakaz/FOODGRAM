@@ -1,11 +1,20 @@
 from django.contrib import admin
-from users.models import Subscriptions, User
+from django.contrib.admin import register
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+
+from .models import Subscriptions
 
 
-class UserAdmin(admin.ModelAdmin):
-    """Админ панель для модели User."""
-    list_filter = ('username', 'email')
+class CustomUserAdmin(UserAdmin):
+    list_display = ['email', 'username', ]
+    list_filter = ['email', 'username', ]
 
 
-admin.site.register(User, UserAdmin)
-admin.site.register(Subscriptions)
+@register(Subscriptions)
+class FollowAdmin(admin.ModelAdmin):
+    autocomplete_fields = ('author', 'user')
+
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)

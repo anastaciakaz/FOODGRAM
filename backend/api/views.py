@@ -26,7 +26,6 @@ class CustomUserViewSet(UserViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    pagination_class = CustomPageNumberPagination
 
     @action(
             methods=['get'],
