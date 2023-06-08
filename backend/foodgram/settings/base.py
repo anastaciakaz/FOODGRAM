@@ -148,8 +148,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPageNumberPagination',
-    'PAGE_SIZE': 6,
 }
 
 DJOSER = {
