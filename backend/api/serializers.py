@@ -1,3 +1,4 @@
+from api.fields import Hex2NameColor
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -8,7 +9,6 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from users.models import Subscriptions
 
-from api.fields import Hex2NameColor
 
 User = get_user_model()
 
