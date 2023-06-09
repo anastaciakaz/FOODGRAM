@@ -1,9 +1,10 @@
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPageNumberPagination
-from api.permissions import AuthorPermission
-from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
-                             RecipeReadSerializer, SubscriptionsSerializer,
-                             TagSerializer, UserSerializer)
+from api.permissions import IsAdminOrReadOnly, AuthorPermission
+from api.serializers import (IngredientSerializer, IngredientAmountSerializer,
+                             RecipeCreateSerializer, RecipeReadSerializer,
+                             SubscriptionsSerializer, TagSerializer,
+                             UserSerializer)
 from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -84,7 +85,7 @@ class CustomUserViewSet(UserViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsAdminOrReadOnly, )
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -96,6 +97,11 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
     search_fields = ('^name', )
     filterset_class = IngredientFilter
+
+
+class IngredientAmountViewSet(viewsets.ModelViewSet):
+    queryset = IngredientAmount.objects.all()
+    serializer_class = IngredientAmountSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -122,6 +128,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def perform_update(self, serializer):
+        """Обновление рецепта."""
         serializer.save()
 
     def add_recipe(self, model, user, id):

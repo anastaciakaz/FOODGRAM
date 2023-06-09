@@ -82,10 +82,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для создания рецепта с возможностью
-    множественного выбора ингредиентов.
-    """
+    """Сериализатор для отображения модели IngredientAmount."""
 
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
@@ -96,13 +93,21 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientAmount
         fields = ('id', 'name', 'measurement_unit', 'amount')
-        extra_kwargs = {
-            'name': {
-                'error_message': {
-                    'exist_error': "Мы не знаем такого игредиента :("
-                }
-            },
 
+
+class IngredientsWriteSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания рецепта с возможностью
+    множественного выбора ингредиентов.
+    """
+
+    id = serializers.IntegerField(write_only=True)
+    amount = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'measurement_unit', 'amount')
+        extra_kwargs = {
             'amount': {
                 'error_message': {
                     'min_value': 'Укажите большее количество ингредиента'
@@ -116,10 +121,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     tag = TagSerializer(read_only=False, many=True)
     author = UserSerializer(read_only=True, many=False)
-    ingredients = IngredientAmountSerializer(
-        many=True,
-        source='recipeamount'
-    )
+    ingredients = IngredientAmountSerializer(source='recipeamount',
+                                             many=True, read_only=True)
     is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
     image = Base64ImageField()
@@ -162,8 +165,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецептов."""
 
-    ingredients = IngredientAmountSerializer(source='recipeamount',
-                                             many=True, read_only=True)
+    ingredients = IngredientsWriteSerializer(many=True)
     tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
     author = UserSerializer(read_only=True, many=False)
