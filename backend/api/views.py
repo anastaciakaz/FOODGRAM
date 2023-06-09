@@ -1,7 +1,7 @@
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPageNumberPagination
 from api.permissions import AuthorAdminPermission, IsAdminOrReadOnly
-from api.serializers import (IngredientAmountSerializer, IngredientSerializer,
+from api.serializers import (IngredientSerializer,
                              RecipeCreateSerializer, RecipeReadSerializer,
                              SubscriptionsSerializer, TagSerializer,
                              UserSerializer)
