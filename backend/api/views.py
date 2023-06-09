@@ -95,11 +95,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = IngredientFilter
 
 
-class IngredientAmountViewSet(viewsets.ModelViewSet):
-    queryset = IngredientAmount.objects.all()
-    serializer_class = IngredientAmountSerializer
-
-
 class RecipeViewSet(viewsets.ModelViewSet):
     """Рецепты."""
 
@@ -121,10 +116,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         информации при создании нового объекта
         """
         serializer.save(author=self.request.user)
-
-    def perform_update(self, serializer):
-        """Обновление рецепта."""
-        serializer.save()
 
     def add_recipe(self, model, user, id):
         """Метод добавления рецепта."""

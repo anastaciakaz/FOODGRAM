@@ -76,6 +76,8 @@ class TagSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     """Сериализатор модели Ingredient."""
 
+    measurement_unit = serializers.CharField(source='measurement_unit.name')
+
     class Meta:
         model = Ingredient
         fields = '__all__'
@@ -84,9 +86,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения модели IngredientAmount."""
 
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
-    )
+    id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -103,6 +103,9 @@ class IngredientsAddSerializer(serializers.ModelSerializer):
     множественного выбора ингредиентов.
     """
 
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all()
+    )
     amount = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -287,8 +290,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
     """Сериализатор для списка избранных рецептов."""
 
     class Meta:
-        model = Favorite
-        fields = ('user', 'recipe')
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
     def validate(self, data):
         """Метод для валидации избранных рецептов."""
@@ -302,12 +305,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
                 'Вы уже добавили этот рецепт в избранное')
         return data
 
-    def to_representation(self, instance):
-        return RecipeReadSerializer(
-            instance.recipe,
-            context={'request': self.context.get('request')}
-        ).data
-
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
     """Сериализатор для списка покупок."""
@@ -316,18 +313,16 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         model = ShoppingCart
         fields = ('user', 'recipe')
 
+    def get_ingredient(self, recipe):
+        ingredient = recipe.ingredients.all()
+        return IngredientSerializer(ingredient, many=True).data
+
     def validate(self, data):
         """Метод для валидации списка покупок."""
         recipe = data['recipe']
         user = data['user']
-        if ShoppingCart.objects.filter(recipe=recipe, user=user):
+        if user.ShoppingCart.objects.filter(recipe=recipe):
             raise serializers.ValidationError(
                 'Этот рецепт уже есть в списке покупок'
             )
         return data
-
-    def to_representation(self, instance):
-        return RecipeReadSerializer(
-            instance.recipe,
-            context={'request': self.context.get('request')}
-        ).data
