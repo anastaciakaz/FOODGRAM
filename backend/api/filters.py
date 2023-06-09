@@ -9,10 +9,7 @@ User = get_user_model()
 class IngredientFilter(SearchFilter):
     """Фильтр для игредиентов."""
 
-    name = filters.CharFilter(
-        field_name='name',
-        lookup_expr='istartswith',
-    )
+    name = filters.CharFilter(lookup_expr='istartswith')
 
     class Meta:
         model = Ingredient

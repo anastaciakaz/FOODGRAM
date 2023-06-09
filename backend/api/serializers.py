@@ -216,14 +216,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 )
         return ingredients
 
-    def add_ingredients_tags(self, tags, ingredients, recipe):
+    def add_ingredients(self, ingredients, recipe):
         """
-        Метод для добавления ингредиентов, их количества
-        и тегов в рецепт.
+        Метод для добавления ингредиентов и их количества в рецепт.
         """
-        for tag in tags:
-            recipe.tags.add(tag)
-            recipe.save()
         IngredientAmount.objects.bulk_create([IngredientAmount(
             recipe=recipe,
             ingredient_id=ingredient.get('id'),
@@ -232,21 +228,24 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Метод переодпределния создания рецепта."""
-        author = self.context.get('request').user
-        tags_data = validated_data.pop('tags')
+        image = validated_data.pop('image')
         ingredients_data = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(author=author, **validated_data)
-        return self.add_ingredients_tags(tags_data, ingredients_data, recipe)
+        recipe = Recipe.objects.create(image=image, **validated_data)
+        tags_data = self.initial_data.get('tags')
+        recipe.tags.set(tags_data)
+        self.add_ingredients(ingredients_data, recipe)
+        return recipe
 
-    def update(self, instance, validated_data):
-        instance.ingredients.clear()
-        instance.tags.clear()
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        instance = super().update(instance, validated_data)
-        return self.add_ingredients_tags(
-            tags, ingredients, instance
-        )
+    def update(self, recipe, validated_data):
+        ingredients = self.initial_data.get('ingredients')
+        tags = self.initial_data.get('tags')
+        recipe = super().update(recipe, validated_data)
+        if ingredients:
+            recipe.ingredients.clear()
+            self.add_ingredients(ingredients, recipe)
+        if tags:
+            recipe.tags.set(tags)
+        return recipe
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):

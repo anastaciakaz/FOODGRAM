@@ -1,13 +1,12 @@
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPageNumberPagination
-from api.permissions import AuthorPermission, IsAdminOrReadOnly
+from api.permissions import AuthorAdminPermission, IsAdminOrReadOnly
 from api.serializers import (IngredientAmountSerializer, IngredientSerializer,
                              RecipeCreateSerializer, RecipeReadSerializer,
                              SubscriptionsSerializer, TagSerializer,
                              UserSerializer)
 from django.db.models import Sum
 from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
@@ -94,7 +93,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (IsAdminOrReadOnly, )
     filterset_class = IngredientFilter
-    search_fields = ('^name', )
 
 
 class IngredientAmountViewSet(viewsets.ModelViewSet):
@@ -107,8 +105,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     serializer_class = RecipeCreateSerializer
     queryset = Recipe.objects.all()
-    permission_classes = (AuthorPermission, )
-    filter_backends = (DjangoFilterBackend, )
+    permission_classes = (AuthorAdminPermission, )
     filterset_class = RecipeFilter
     pagination_class = CustomPageNumberPagination
 
