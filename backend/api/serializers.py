@@ -6,7 +6,7 @@ from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
+from rest_framework.validators import UniqueValidator
 from users.models import Subscriptions
 
 User = get_user_model()
