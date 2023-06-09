@@ -76,8 +76,6 @@ class TagSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     """Сериализатор модели Ingredient."""
 
-    measurement_unit = serializers.CharField(source='measurement_unit.name')
-
     class Meta:
         model = Ingredient
         fields = '__all__'
@@ -89,7 +87,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit.name'
+        source='ingredient.measurement_unit'
     )
 
     class Meta:
@@ -103,13 +101,8 @@ class IngredientsAddSerializer(serializers.ModelSerializer):
     множественного выбора ингредиентов.
     """
 
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
-    )
-    amount = serializers.IntegerField(write_only=True)
-
     class Meta:
-        model = Ingredient
+        model = IngredientAmount
         fields = ('id', 'amount')
         extra_kwargs = {
             'amount': {
@@ -172,7 +165,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = IngredientsAddSerializer(many=True)
     tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
-    author = UserSerializer(read_only=True, many=False)
     cooking_time = serializers.IntegerField()
 
     class Meta:
@@ -284,33 +276,3 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         if limit:
             queryset = queryset[:int(limit)]
         return RecipeReadSerializer(queryset, many=True).data
-
-
-class FavoriteSerializer(serializers.ModelSerializer):
-    """Сериализатор для списка избранных рецептов."""
-
-    recipe = serializers.PrimaryKeyRelatedField(
-        queryset=Recipe.objects.all()
-    )
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all()
-    )
-
-    class Meta:
-        model = Favorite
-        fields = ('user', 'recipe')
-
-
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    """Сериализатор для списка покупок."""
-
-    recipe = serializers.PrimaryKeyRelatedField(
-        queryset=Recipe.objects.all()
-    )
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all()
-    )
-
-    class Meta:
-        model = ShoppingCart
-        fields = ('user', 'recipe')
