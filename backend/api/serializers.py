@@ -276,3 +276,6 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         if limit:
             queryset = queryset[:int(limit)]
         return RecipeReadSerializer(queryset, many=True).data
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj.author).count()
