@@ -95,7 +95,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class IngredientsWriteSerializer(serializers.ModelSerializer):
+class IngredientsAddSerializer(serializers.ModelSerializer):
     """
     Сериализатор для создания рецепта с возможностью
     множественного выбора ингредиентов.
@@ -106,7 +106,7 @@ class IngredientsWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'name', 'measurement_unit', 'amount')
+        fields = ('id', 'amount')
         extra_kwargs = {
             'amount': {
                 'error_message': {
@@ -119,7 +119,7 @@ class IngredientsWriteSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра рецепта."""
 
-    tag = TagSerializer(read_only=False, many=True)
+    tag = TagSerializer(read_only=True, many=True)
     author = UserSerializer(read_only=True, many=False)
     ingredients = IngredientAmountSerializer(source='recipeamount',
                                              many=True, read_only=True)
@@ -165,7 +165,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецептов."""
 
-    ingredients = IngredientsWriteSerializer(many=True)
+    ingredients = IngredientsAddSerializer(many=True)
     tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
     author = UserSerializer(read_only=True, many=False)
