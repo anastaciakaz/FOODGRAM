@@ -84,7 +84,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения модели IngredientAmount."""
 
-    id = serializers.ReadOnlyField(source='ingredient.id')
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all()
+    )
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -93,20 +95,6 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientAmount
         fields = ('id', 'name', 'measurement_unit', 'amount')
-
-
-class IngredientsAddSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для создания рецепта с возможностью
-    множественного выбора ингредиентов.
-    """
-
-    id = serializers.IntegerField(write_only=True)
-    amount = serializers.IntegerField(write_only=True)
-
-    class Meta:
-        model = Ingredient
-        fields = ('id', 'amount')
         extra_kwargs = {
             'amount': {
                 'error_message': {
@@ -165,7 +153,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецептов."""
 
-    ingredients = IngredientsAddSerializer(many=True)
+    ingredients = IngredientAmountSerializer(many=True)
     tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
     author = UserSerializer(read_only=True, many=False)
@@ -301,6 +289,12 @@ class FavoriteSerializer(serializers.ModelSerializer):
                 'Вы уже добавили этот рецепт в избранное')
         return data
 
+    def to_representation(self, instance):
+        return RecipeReadSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')}
+        ).data
+
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
     """Сериализатор для списка покупок."""
@@ -318,3 +312,9 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                 'Этот рецепт уже есть в списке покупок'
             )
         return data
+
+    def to_representation(self, instance):
+        return RecipeReadSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')}
+        ).data
