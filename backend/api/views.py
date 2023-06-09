@@ -1,10 +1,9 @@
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPageNumberPagination
 from api.permissions import AuthorAdminPermission, IsAdminOrReadOnly
-from api.serializers import (IngredientSerializer,
-                             RecipeCreateSerializer, RecipeReadSerializer,
-                             SubscriptionsSerializer, TagSerializer,
-                             UserSerializer)
+from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
+                             RecipeReadSerializer, SubscriptionsSerializer,
+                             TagSerializer, UserSerializer)
 from django.db.models import Sum
 from django.http import HttpResponse
 from djoser.views import UserViewSet
