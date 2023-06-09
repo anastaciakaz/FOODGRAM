@@ -12,11 +12,10 @@ from djoser.views import UserViewSet
 from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
 from reportlab.pdfgen import canvas
-from rest_framework import filters, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscriptions, User
 
