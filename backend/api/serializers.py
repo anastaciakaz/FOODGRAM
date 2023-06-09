@@ -104,22 +104,33 @@ class IngredientQuantityReadSerializer(serializers.ModelSerializer):
         ]
 
 
-class RecipeIngredientAddSerializer(serializers.ModelField):
+class RecipeIngredientAddSerializer(serializers.ModelSerializer):
     """
     Сериализатор для создания рецепта с возможностью
     множественного выбора ингредиентов.
     """
 
+    id = serializers.ReadOnlyField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit'
+    )
+
     class Meta:
         model = IngredientQuantity
-        fields = ('id', 'quantity')
+        fields = (
+            'id',
+            'name',
+            'measurement_unit',
+            'quantity'
+        )
         extra_kwargs = {
-            'id': {
-                'read_only': False,
+            'name': {
                 'error_message': {
-                    'exist_error': 'Мы не знаем такого ингредиента',
+                    'exist_error': "Мы не знаем такого игредиента :("
                 }
             },
+
             'quantity': {
                 'error_message': {
                     'min_value': 'Укажите большее количество ингредиента'
@@ -177,7 +188,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецептов."""
 
     ingredients = RecipeIngredientAddSerializer(source='recipequantity',
-                                                many=True)
+                                                many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
     author = UserSerializer(read_only=True, many=False)
