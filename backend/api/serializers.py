@@ -2,7 +2,7 @@ from api.fields import Hex2NameColor
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
+from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
@@ -71,7 +71,6 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
-        read_only_fields = '__all__'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -82,29 +81,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class IngredientQuantityReadSerializer(serializers.ModelSerializer):
-    """Сериализатор для отображения модели IngredientQuantity."""
-
-    id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all()
-    )
-    name = serializers.ReadOnlyField(source='ingredient.name')
-    measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit'
-    )
-
-    class Meta:
-        model = IngredientQuantity
-        fields = ('id', 'name', 'measurement_unit', 'quantity')
-        validators = [
-            UniqueTogetherValidator(
-                queryset=IngredientQuantity.objects.all(),
-                fields=['ingredient', 'recipe']
-            )
-        ]
-
-
-class RecipeIngredientAddSerializer(serializers.ModelSerializer):
+class IngredientAmountSerializer(serializers.ModelSerializer):
     """
     Сериализатор для создания рецепта с возможностью
     множественного выбора ингредиентов.
@@ -117,13 +94,8 @@ class RecipeIngredientAddSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = IngredientQuantity
-        fields = (
-            'id',
-            'name',
-            'measurement_unit',
-            'quantity'
-        )
+        model = IngredientAmount
+        fields = ('id', 'name', 'measurement_unit', 'amount')
         extra_kwargs = {
             'name': {
                 'error_message': {
@@ -131,7 +103,7 @@ class RecipeIngredientAddSerializer(serializers.ModelSerializer):
                 }
             },
 
-            'quantity': {
+            'amount': {
                 'error_message': {
                     'min_value': 'Укажите большее количество ингредиента'
                 }
@@ -144,7 +116,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     tag = TagSerializer(read_only=False, many=True)
     author = UserSerializer(read_only=True, many=False)
-    ingredients = IngredientSerializer(many=True)
+    ingredients = IngredientAmountSerializer(
+        many=True,
+        source='recipeamount'
+    )
     is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
     image = Base64ImageField()
@@ -187,8 +162,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецептов."""
 
-    ingredients = RecipeIngredientAddSerializer(source='recipequantity',
-                                                many=True, read_only=True)
+    ingredients = IngredientAmountSerializer(source='recipeamount',
+                                             many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
     author = UserSerializer(read_only=True, many=False)
@@ -233,7 +208,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                     }
                 )
             ingredients_list.append(ingredient['id'])
-            if int(ingredient.get('quantity')) < 1:
+            if int(ingredient.get('amount')) < 1:
                 raise serializers.ValidationError(
                     'Количество ингредиента должно быть больше 0'
                 )
@@ -247,10 +222,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
             recipe.save()
-        IngredientQuantity.objects.bulk_create([IngredientQuantity(
+        IngredientAmount.objects.bulk_create([IngredientAmount(
             recipe=recipe,
             ingredient_id=ingredient.get('id'),
-            quantity=ingredient.get('quantity')
+            amount=ingredient.get('amount')
         ) for ingredient in ingredients])
 
     def create(self, validated_data):

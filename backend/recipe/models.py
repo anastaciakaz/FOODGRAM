@@ -76,7 +76,7 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='IngredientQuantity',
+        through='IngredientAmount',
         verbose_name='Ингредиенты',
         related_name='recipes',
     )
@@ -114,13 +114,13 @@ class Recipe(models.Model):
         return f'{self.name}, {self.author}'
 
 
-class IngredientQuantity(models.Model):
+class IngredientAmount(models.Model):
     """Модель ингредиентов в рецепте с количеством."""
 
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipequantity',
+        related_name='recipeamount',
         verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
@@ -128,7 +128,7 @@ class IngredientQuantity(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Ингредиент'
     )
-    quantity = models.PositiveIntegerField(
+    amount = models.PositiveIntegerField(
         validators=[
             validators.MinValueValidator(
                 MIN_VALUE_INGREDIENT_QUANTITY,
@@ -145,12 +145,12 @@ class IngredientQuantity(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
-                name='unique ingredient quantity'
+                name='unique ingredient amount'
             )
         ]
 
     def __str__(self):
-        return (f'В рецепте {self.recipe.name} {self.quantity} '
+        return (f'В рецепте {self.recipe.name} {self.amount} '
                 f'{self.ingredient.measurement_unit} {self.ingredient.name}')
 
 

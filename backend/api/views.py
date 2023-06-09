@@ -8,7 +8,7 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
+from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
 from reportlab.pdfgen import canvas
 from rest_framework import filters, status, viewsets
@@ -172,14 +172,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         """Формирвоание и скачивание списка покупок."""
         shopping_list = []
-        ingredients_list = IngredientQuantity.objects.filter(
+        ingredients_list = IngredientAmount.objects.filter(
             recipe__purchases__user=request.user
         ).order_by('ingredient__name').values(
             'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(quantity=Sum('quantity'))
+        ).annotate(amount=Sum('amount'))
         for ingredient in ingredients_list:
             shopping_list.append(
-                f'{ingredient["ingredient__name"]} - {ingredient["quantity"]} '
+                f'{ingredient["ingredient__name"]} - {ingredient["amount"]} '
                 f'{ingredient["ingredient__measurement_unit"]} \n'
             )
         response = HttpResponse(

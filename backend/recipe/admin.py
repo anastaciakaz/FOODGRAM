@@ -1,5 +1,5 @@
 from django.contrib import admin
-from recipe.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
+from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
 
 
@@ -56,11 +56,11 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-class IngredientQuantityAdmin(admin.ModelAdmin):
-    """Админ панель для управления моделью IngredientQuantity."""
+class IngredientAmountAdmin(admin.ModelAdmin):
+    """Админ панель для управления моделью IngredientAmount."""
 
     list_display = ('recipe', 'ingredient',
-                    'quantity', 'get_measurement_unit', )
+                    'amount', 'get_measurement_unit', )
 
     def get_measurement_unit(self, obj):
         return obj.ingredient.measurement_unit
@@ -68,7 +68,7 @@ class IngredientQuantityAdmin(admin.ModelAdmin):
 
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(IngredientQuantity, IngredientQuantityAdmin)
+admin.site.register(IngredientAmount, IngredientAmountAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
