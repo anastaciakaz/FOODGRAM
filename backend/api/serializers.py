@@ -89,7 +89,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit'
+        source='ingredient.measurement_unit.name'
     )
 
     class Meta:
@@ -126,7 +126,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     tag = TagSerializer(read_only=True, many=True)
     author = UserSerializer(read_only=True, many=False)
     ingredients = IngredientAmountSerializer(source='recipeamount',
-                                             many=True, read_only=True)
+                                             many=True)
     is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
     image = Base64ImageField()
@@ -289,40 +289,28 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(serializers.ModelSerializer):
     """Сериализатор для списка избранных рецептов."""
 
-    class Meta:
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
+    recipe = serializers.PrimaryKeyRelatedField(
+        queryset=Recipe.objects.all()
+    )
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all()
+    )
 
-    def validate(self, data):
-        """Метод для валидации избранных рецептов."""
-        recipe = data['recipe']
-        user = data['user']
-        if user == recipe.author:
-            raise serializers.ValidationError(
-                'Вы не можете добавить свои рецепты в избранное')
-        if Favorite.objects.filter(recipe=recipe, user=user).exists():
-            raise serializers.ValidationError(
-                'Вы уже добавили этот рецепт в избранное')
-        return data
+    class Meta:
+        model = Favorite
+        fields = ('user', 'recipe')
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
     """Сериализатор для списка покупок."""
 
+    recipe = serializers.PrimaryKeyRelatedField(
+        queryset=Recipe.objects.all()
+    )
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all()
+    )
+
     class Meta:
         model = ShoppingCart
         fields = ('user', 'recipe')
-
-    def get_ingredient(self, recipe):
-        ingredient = recipe.ingredients.all()
-        return IngredientSerializer(ingredient, many=True).data
-
-    def validate(self, data):
-        """Метод для валидации списка покупок."""
-        recipe = data['recipe']
-        user = data['user']
-        if user.ShoppingCart.objects.filter(recipe=recipe):
-            raise serializers.ValidationError(
-                'Этот рецепт уже есть в списке покупок'
-            )
-        return data
