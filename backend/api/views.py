@@ -94,6 +94,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
+    search_fields = ('^name', )
     filterset_class = IngredientFilter
 
 

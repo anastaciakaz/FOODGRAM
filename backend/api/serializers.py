@@ -67,7 +67,6 @@ class TagSerializer(serializers.ModelSerializer):
     """Сериализатор модели Tag."""
 
     color = Hex2NameColor()
-    slug = serializers.SlugField()
 
     class Meta:
         model = Tag
@@ -177,13 +176,9 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецептов."""
 
-    ingredients = serializers.SerializerMethodField()
-    tags = serializers.ListField(
-        child=serializers.SlugRelatedField(
-            slug_field='slug',
-            queryset=Tag.objects.all(),
-        )
-    )
+    ingredients = RecipeIngredientAddSerializer(source='recipequantity',
+                                                many=True)
+    tags = TagSerializer(many=True, read_only=True)
     image = Base64ImageField()
     author = UserSerializer(read_only=True, many=False)
     cooking_time = serializers.IntegerField()
