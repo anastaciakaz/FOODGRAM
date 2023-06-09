@@ -6,8 +6,8 @@ from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              SubscriptionsSerializer, TagSerializer,
                              UserSerializer)
 from django.db.models import Sum
-from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
