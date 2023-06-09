@@ -1,5 +1,4 @@
 from api.filters import IngredientFilter, RecipeFilter
-from api.mixins import ListRetriveViewSet
 from api.pagination import CustomPageNumberPagination
 from api.permissions import AuthorPermission
 from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
@@ -82,7 +81,7 @@ class CustomUserViewSet(UserViewSet):
         )
 
 
-class TagViewSet(ListRetriveViewSet):
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly, )
