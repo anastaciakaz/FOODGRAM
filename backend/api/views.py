@@ -2,9 +2,11 @@ from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPageNumberPagination
 from api.permissions import AuthorAdminPermission, IsAdminOrReadOnly
 from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
-                             RecipeReadSerializer, SubscriptionsSerializer,
-                             TagSerializer, UserSerializer)
+                             RecipeReadSerializer, RecipeShortSerializer,
+                             SubscriptionsSerializer, TagSerializer,
+                             UserSerializer)
 from django.db.models import Sum
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from djoser.views import UserViewSet
 from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
@@ -100,6 +102,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeCreateSerializer
     queryset = Recipe.objects.all()
     permission_classes = (AuthorAdminPermission, )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = CustomPageNumberPagination
 
@@ -126,7 +129,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         recipe = get_object_or_404(Recipe, id=id)
         model.objects.create(user=user, recipe=recipe)
-        serializer = RecipeReadSerializer(recipe)
+        serializer = RecipeShortSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete_recipe(self, model, user, id):

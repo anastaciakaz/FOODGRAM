@@ -97,20 +97,15 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 
 class IngredientsAddSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для создания рецепта с возможностью
-    множественного выбора ингредиентов.
+    Сериализатор для ингредиента в рецептах.
     """
+
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = IngredientAmount
         fields = ('id', 'amount')
-        extra_kwargs = {
-            'amount': {
-                'error_message': {
-                    'min_value': 'Укажите большее количество ингредиента'
-                }
-            }
-        }
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
@@ -169,7 +164,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = ('ingredients', 'tags', 'name',
+                  'image', 'description', 'cooking_time')
+
+    def to_representation(self, instance):
+        serializer = RecipeReadSerializer(
+            instance,
+            context=self.context
+        )
+        return serializer.data
 
     def validate_tags(self, tags):
         """Метод для валидации тегов в рецепте."""
@@ -242,6 +245,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         if tags:
             recipe.tags.set(tags)
         return recipe
+
+
+class RecipeShortSerializer(serializers.ModelSerializer):
+    """Сериализатор для компактного отображения рецептов."""
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
