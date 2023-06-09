@@ -43,6 +43,12 @@ class CustomUserCreateSerializer(UserCreateSerializer):
             'last_name',
         )
 
+    def create(self, validated_data):
+        user = User.objects.create(**validated_data['user'])
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
 
 class UserSerializer(UserSerializer):
     """Сериализатор модели User."""
