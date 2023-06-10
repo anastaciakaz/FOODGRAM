@@ -51,8 +51,8 @@ class UserSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
-            'email', 'username', 'first_name', 'last_name',
-            'password', 'is_subscribed'
+            'id', 'email', 'username', 'first_name', 'last_name',
+            'is_subscribed'
         )
 
     def get_is_subscribed(self, obj):
@@ -251,22 +251,18 @@ class RecipeShortSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class SubscriptionsSerializer(serializers.ModelSerializer):
+class SubscriptionsSerializer(UserSerializer):
     """Сериализатор для получения списка подписок."""
 
     is_subscribed = serializers.SerializerMethodField()
     recipes_count = SerializerMethodField()
     recipes = SerializerMethodField()
 
-    class Meta:
-        model = User
-        fields = (
-            'id',
-            'email', 'username',
-            'last_name', 'first_name', 'is_subscribed',
-            'recipes', 'recipes_count'
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ('recipes', 'recipes_count')
+        read_only_fields = (
+            'id', 'email', 'username', 'first_name', 'last_name'
         )
-        read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
     def get_recipes(self, obj):
         """Получение списка рецептов автора."""
@@ -276,13 +272,6 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         if limit:
             queryset = queryset[:int(limit)]
         return RecipeShortSerializer(queryset, many=True).data
-
-    def get_is_subscribed(self, obj):
-        """Статус подписки на автора."""
-        user = self.context.get('request').user
-        return Subscriptions.objects.filter(
-            user=user, author=obj.author
-        ).exists()
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
