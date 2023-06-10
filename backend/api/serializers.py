@@ -128,29 +128,26 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         ingredients = IngredientAmount.objects.filter(recipe=obj).all()
         return IngredientAmountSerializer(ingredients, many=True).data
 
-    def get_is_favorited(self, obj):
+    def get_is_favorited(self, recipe):
         """
         Метод для определения находится ли рецепт у аутентифицированного
         пользователя в списке любимых рецептов.
         """
         user = self.context['request'].user
-        if user.is_anonymous:
-            return False
-        return (
-            Favorite.objects.filter(recipe=obj, user=user).exists()
-        )
+        return user.is_authenticated and user.favorites.filter(
+            recipe=recipe).exists()
 
-    def get_is_in_shopping_cart(self, obj):
+    def get_is_in_shopping_cart(self, recipe):
         """
         Метод для определения находится ли рецепт в корзине у
         аутентифицированного пользователя.
         """
         user = self.context['request'].user
         try:
-            return (
-                user.is_authenticated and
-                ShoppingCart.objects.filter(recipe=obj, user=user).exists()
-            )
+            user = self.context['request'].user
+            return user.is_authenticated and user.purchases.filter(
+                recipe=recipe
+            ).exists()
         except ShoppingCart.DoesNotExist:
             return False
 
@@ -229,7 +226,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(author=user, **validated_data)
-        self.add_ingredients_and_tags(ingredients, tags, recipe)
+        self.add_ingredients_tags(ingredients, tags, recipe)
         return recipe
 
     def update(self, recipe, validated_data):
@@ -237,7 +234,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         recipe.tags.clear()
         recipe.ingredients.clear()
-        self.add_ingredients_and_tags(ingredients, tags, recipe)
+        self.add_ingredients_tags(ingredients, tags, recipe)
         return super().update(recipe, validated_data)
 
     def to_representation(self, instance):
