@@ -5,13 +5,10 @@ from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              RecipeReadSerializer, RecipeShortSerializer,
                              SubscriptionsSerializer, TagSerializer,
                              UserSerializer)
-from django.db.models import Sum
-from django.http import HttpResponse
+from api.utils import download_shopping_list
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                           ShoppingCart, Tag)
-from reportlab.pdfgen import canvas
+from recipe.models import (Favorite, Ingredient, Recipe, ShoppingCart, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -169,27 +166,4 @@ class RecipeViewSet(viewsets.ModelViewSet):
             methods=['get'],
             permission_classes=(IsAuthenticated, ))
     def download_shopping_cart(self, request):
-        """Формирвоание и скачивание списка покупок."""
-        shopping_list = []
-        ingredients_list = IngredientAmount.objects.filter(
-            recipe__purchases__user=request.user
-        ).order_by('ingredient__name').values(
-            'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
-        for ingredient in ingredients_list:
-            shopping_list.append(
-                f'{ingredient["ingredient__name"]} - {ingredient["amount"]} '
-                f'{ingredient["ingredient__measurement_unit"]} \n'
-            )
-        response = HttpResponse(
-            '\n'.join(shopping_list), content_type='application/pdf'
-        )
-        response['Content-Disposition'] = (
-            f'attachment; filename="{request.user} shoppinglist.pdf"'
-        )
-        p = canvas.Canvas(response)
-        p.setFont("Times-Roman", 18)
-        p.drawString(100, 700, "Список покупок: ")
-        p.showPage()
-        p.save()
-        return response
+        return download_shopping_list(request)
