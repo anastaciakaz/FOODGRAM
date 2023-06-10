@@ -49,17 +49,19 @@ class CustomUserViewSet(UserViewSet):
         permission_classes=(IsAuthenticated, ),
         detail=True
     )
-    def subscribe_create_delete(self, request, id):
+    def subscribe(self, request, id):
         """Создание или отмена подписки."""
+        user = request.user
         author = get_object_or_404(User, id=id)
+
         if request.method == 'POST':
-            if request.user == author:
+            if user.id == author.id:
                 return Response(
                     {'error_message': 'Нельзя подписаться на самого себя'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             if Subscriptions.objects.filter(
-                user=request.user, author=author
+                user=user, author=author
             ).exists():
                 return Response(
                     {'error_message': f'Вы уже подписаны на {author}'},
@@ -79,7 +81,7 @@ class CustomUserViewSet(UserViewSet):
                 return Response({'errors': 'Вы не подписаны'},
                                 status=status.HTTP_400_BAD_REQUEST)
             subscription = get_object_or_404(Subscriptions,
-                                             user=request.user,
+                                             user=user,
                                              author=author)
             subscription.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
