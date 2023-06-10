@@ -33,7 +33,7 @@ class CustomUserViewSet(UserViewSet):
         )
     def subscriptions(self, request):
         """Получение списка подписок."""
-        queryset = Subscriptions.objects.filter(
+        queryset = User.objects.filter(
             following__user=request.user
         )
         page = self.paginate_queryset(queryset)
