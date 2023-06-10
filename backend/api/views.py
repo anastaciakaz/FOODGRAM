@@ -145,20 +145,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     @action(detail=True,
-            methods=['get', 'delete'],
+            methods=['post', 'delete'],
             permission_classes=(IsAuthenticated, ))
     def favorite(self, request, id=None):
         """Добавление и удаление рецептов из избранного."""
-        if request.method == 'GET':
+        if request.method == 'POST':
             return self.add_recipe(Favorite, request.user, id)
         return self.delete_recipe(Favorite, request.user, id)
 
     @action(detail=True,
-            methods=['get', 'delete'],
+            methods=['post', 'delete'],
             permission_classes=(IsAuthenticated, ))
     def shopping_cart(self, request, id=None):
         """Добавление и удаление рецептов из корзины."""
-        if request.method == 'GET':
+        if request.method == 'POST':
             return self.add_recipe(ShoppingCart, request.user, id)
         return self.delete_recipe(ShoppingCart, request.user, id)
 
