@@ -85,6 +85,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
     permission_classes = (IsAdminOrReadOnly, )
+    pagination_class = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -94,6 +95,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (IsAdminOrReadOnly, )
     filterset_class = IngredientFilter
+    pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -117,6 +119,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         Метод используется для добавления дополнительной
         информации при создании нового объекта
         """
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
         serializer.save(author=self.request.user)
 
     def add_recipe(self, model, user, id):
