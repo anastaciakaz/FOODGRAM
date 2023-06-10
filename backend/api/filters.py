@@ -5,7 +5,7 @@ from recipe.models import Ingredient, Recipe, Tag
 User = get_user_model()
 
 
-class IngredientFilter(filters.FilterSet):
+class IngredientFilter(FilterSet):
     name = filters.CharFilter(
         field_name='name',
         lookup_expr='istartswith'
