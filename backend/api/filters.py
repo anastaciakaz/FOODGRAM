@@ -1,19 +1,19 @@
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import FilterSet, filters
 from recipe.models import Ingredient, Recipe, Tag
-from rest_framework.filters import SearchFilter
 
 User = get_user_model()
 
 
-class IngredientFilter(SearchFilter):
-    """Фильтр для игредиентов."""
-
-    name = filters.CharFilter(lookup_expr='istartswith')
+class IngredientFilter(filters.FilterSet):
+    name = filters.CharFilter(
+        field_name='name',
+        lookup_expr='istartswith'
+    )
 
     class Meta:
         model = Ingredient
-        fields = ('name',)
+        fields = ('name', )
 
 
 class RecipeFilter(FilterSet):
