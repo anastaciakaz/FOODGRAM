@@ -10,18 +10,19 @@ class Subscriptions(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriber',
+        related_name='follower',
         verbose_name='Подписчик'
     )
 
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscribed',
+        related_name='following',
         verbose_name='Автор'
     )
 
     class Meta:
+        ordering = ['-id']
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [

@@ -34,15 +34,14 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         """Получение списка подписок."""
         queryset = Subscriptions.objects.filter(
-            subscribed__user=request.user
+            following__user=request.user
         )
         page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = SubscriptionsSerializer(
+        serializer = SubscriptionsSerializer(
                 page,
                 many=True,
                 context={'request': request}
-            )
+        )
         return self.get_paginated_response(serializer.data)
 
     @action(

@@ -222,10 +222,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Метод переодпределния создания рецепта."""
-        user = self.context['request'].user
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(author=user, **validated_data)
+        recipe = Recipe.objects.create(**validated_data)
         self.add_ingredients_tags(ingredients, tags, recipe)
         return recipe
 
