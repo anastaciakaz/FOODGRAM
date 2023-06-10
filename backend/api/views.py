@@ -119,9 +119,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         serializer.save(author=self.request.user)
 
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
-
     def add_recipe(self, model, user, id):
         """Метод добавления рецепта."""
         obj = model.objects.filter(author=user, recipe__id=id)
