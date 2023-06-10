@@ -119,7 +119,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'id', 'name', 'tags', 'ingrediants', 'image',
-            'description', 'cooking_time', 'is_favorited',
+            'text', 'cooking_time', 'is_favorited',
             'is_in_shopping_cart', 'author'
         )
 
@@ -163,13 +163,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(), many=True
     )
     image = Base64ImageField()
-    description = serializers.CharField()
     cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
         fields = ('ingredients', 'tags', 'name',
-                  'image', 'description', 'cooking_time')
+                  'image', 'text', 'cooking_time')
 
     def validate_tags(self, tags):
         """Метод для валидации тегов в рецепте."""

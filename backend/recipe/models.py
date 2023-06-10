@@ -97,7 +97,7 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='Теги'
     )
-    description = models.TextField(
+    text = models.TextField(
         verbose_name='Описание'
     )
     pub_date = models.DateTimeField(
