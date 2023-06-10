@@ -34,7 +34,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         """Получение списка подписок."""
         queryset = User.objects.filter(
-            following__user=request.user
+            subscriptions__user=request.user
         )
         page = self.paginate_queryset(queryset)
         serializer = SubscriptionsSerializer(
@@ -116,13 +116,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.method == 'GET':
             return RecipeReadSerializer
         return RecipeCreateSerializer
-
-    def perform_create(self, serializer):
-        """
-        Метод используется для добавления дополнительной
-        информации при создании нового объекта
-        """
-        serializer.save(author=self.request.user)
 
     def add_recipe(self, model, user, id):
         """Метод добавления рецепта."""
