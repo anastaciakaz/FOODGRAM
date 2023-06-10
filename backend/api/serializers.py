@@ -128,11 +128,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'is_in_shopping_cart', 'author'
         )
 
-    def get_ingredients(self, obj: Recipe):
-        """Получает ингридиенты рецепта."""
-        ingredients = IngredientAmount.objects.filter(recipe=obj).all()
-        return IngredientAmountSerializer(ingredients, many=True).data
-
     def get_is_favorited(self, recipe):
         """
         Метод для определения находится ли рецепт у аутентифицированного
