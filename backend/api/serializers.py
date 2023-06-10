@@ -163,6 +163,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(), many=True
     )
     image = Base64ImageField()
+    description = serializers.CharField()
     cooking_time = serializers.IntegerField()
 
     class Meta:
