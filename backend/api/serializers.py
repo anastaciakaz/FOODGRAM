@@ -264,14 +264,12 @@ class SubscriptionsSerializer(UserSerializer):
             'id', 'email', 'username', 'first_name', 'last_name'
         )
 
-    def get_recipes(self, obj):
+    def get_recipes(self, user):
         """Получение списка рецептов автора."""
-        request = self.context['request']
-        limit = request.GET.get('recipes_limit')
-        queryset = Recipe.objects.filter(author=obj.author)
-        if limit:
-            queryset = queryset[:int(limit)]
-        return RecipeShortSerializer(queryset, many=True).data
+        recipes = user.recipes.all()
+        serializer = RecipeShortSerializer(recipes, many=True,
+                                           context=self.context)
+        return serializer.data
 
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()
+    def get_recipes_count(self, user):
+        return user.recipes.count()
