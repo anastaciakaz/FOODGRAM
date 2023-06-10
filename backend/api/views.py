@@ -28,7 +28,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
             methods=['get'],
-            permission_classes=(IsAuthenticated),
+            permission_classes=(IsAuthenticated, ),
             detail=False
         )
     def subscriptions(self, request):
@@ -47,7 +47,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
         methods=['post', 'delete'],
-        permission_classes=(IsAuthenticated),
+        permission_classes=(IsAuthenticated, ),
         detail=True
     )
     def subscribe_create_delete(self, request, id):
@@ -163,7 +163,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False,
             methods=['get'],
-            permission_classes=(IsAuthenticated,))
+            permission_classes=(IsAuthenticated, ))
     def download_shopping_cart(self, request):
         """Формирвоание и скачивание списка покупок."""
         shopping_list = []
