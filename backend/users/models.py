@@ -33,4 +33,4 @@ class Subscriptions(models.Model):
         ]
 
     def __str__(self) -> str:
-        return self.user
+        return f'{self.user} follows {self.author}'
