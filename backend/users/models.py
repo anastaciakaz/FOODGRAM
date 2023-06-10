@@ -10,15 +10,15 @@ class Subscriptions(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriptions',
+        related_name='subscriber',
         verbose_name='Подписчик'
     )
 
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscribers',
-        verbose_name='Подписки'
+        related_name='subscribed',
+        verbose_name='Автор'
     )
 
     class Meta:
@@ -27,6 +27,9 @@ class Subscriptions(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'author'],
-                name='unique subscription'
+                name='unique_subscription'
             )
         ]
+
+    def __str__(self) -> str:
+        return f'{self.user.username} подписан(а) на {self.author.username}'

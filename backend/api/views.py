@@ -34,7 +34,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         """Получение списка подписок."""
         queryset = Subscriptions.objects.filter(
-            subscribers__user=request.user
+            subscribed__user=request.user
         )
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -59,7 +59,9 @@ class CustomUserViewSet(UserViewSet):
                     {'error_message': 'Нельзя подписаться на самого себя'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            if Subscriptions.objects.filter(user=request.user, author=author):
+            if Subscriptions.objects.filter(
+                user=request.user, author=author
+            ).exists():
                 return Response(
                     {'error_message': f'Вы уже подписаны на {author}'},
                     status=status.HTTP_400_BAD_REQUEST
@@ -71,14 +73,18 @@ class CustomUserViewSet(UserViewSet):
                 subscriber, context={'request': request}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        Subscriptions.objects.filter(user=request.user, author=author).exists()
-        subscriber = get_object_or_404(
-            Subscriptions, user=request.user, author=author
-        )
-        subscriber.delete()
-        return Response(
-            {'message': f'Подписка на {author} отменена'}
-        )
+        if request.method == 'DELETE':
+            if not Subscriptions.objects.filter(
+                user=request.user, author=author
+            ).exists():
+                return Response({'errors': 'Вы не подписаны'},
+                                status=status.HTTP_400_BAD_REQUEST)
+            subscription = get_object_or_404(Subscriptions,
+                                             user=request.user,
+                                             author=author)
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
