@@ -1,8 +1,8 @@
 from api.fields import Base64ImageField, Hex2NameColor
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipe.models import (Ingredient, IngredientAmount, Recipe,
-                           ShoppingCart, Tag)
+from recipe.models import (Ingredient, IngredientAmount, Recipe, ShoppingCart,
+                           Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueValidator
