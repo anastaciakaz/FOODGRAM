@@ -25,11 +25,14 @@ class CustomUserViewSet(UserViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class = CustomPageNumberPagination
 
     @action(
             methods=['get'],
             permission_classes=(IsAuthenticated, ),
-            detail=False
+            detail=False,
+            url_path='subscriptions',
+
         )
     def subscriptions(self, request):
         """Получение списка подписок."""
