@@ -13,7 +13,7 @@ load_dotenv(os.path.join(BASE_DIR.parent.parent.parent,
 
 
 DEBUG = os.getenv('DEBUG_VAR')
-ALLOWED_HOSTS = ['http://foodgram-projreact.ddns.net/', '158.160.105.204']
+ALLOWED_HOSTS = ['*']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
