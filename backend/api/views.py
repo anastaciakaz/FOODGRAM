@@ -120,22 +120,25 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeReadSerializer
         return RecipeCreateSerializer
 
-    def add_recipe(self, model, user, id):
+    def add_recipe(self, model, request, recipe_id):
         """Метод добавления рецепта."""
-        obj = model.objects.filter(author=user, recipe__id=id)
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        obj = model.objects.filter(user=user, recipe=recipe)
         if obj.exists():
             return Response(
                 {'error_message': 'Этот рецепт уже добавлен'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        recipe = get_object_or_404(Recipe, id=id)
         model.objects.create(user=user, recipe=recipe)
         serializer = RecipeShortSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete_recipe(self, model, user, id):
+    def delete_recipe(self, model, request, recipe_id):
         """Метод удаления рецепта."""
-        obj = model.objects.filter(author=user, recipe__id=id)
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        obj = model.objects.filter(user=user, recipe=recipe)
         if obj.exists():
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -150,8 +153,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, pk=None):
         """Добавление и удаление рецептов из избранного."""
         if request.method == 'POST':
-            return self.add_recipe(Favorite, request.user, pk)
-        return self.delete_recipe(Favorite, request.user, pk)
+            return self.add_recipe(Favorite, request, pk)
+        return self.delete_recipe(Favorite, request, pk)
 
     @action(detail=True,
             methods=['post', 'delete'],
@@ -159,8 +162,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         """Добавление и удаление рецептов из корзины."""
         if request.method == 'POST':
-            return self.add_recipe(ShoppingCart, request.user, pk)
-        return self.delete_recipe(ShoppingCart, request.user, pk)
+            return self.add_recipe(ShoppingCart, request, pk)
+        return self.delete_recipe(ShoppingCart, request, pk)
 
     @action(detail=False,
             methods=['get'],
