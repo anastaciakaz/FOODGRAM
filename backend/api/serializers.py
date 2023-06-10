@@ -1,7 +1,7 @@
 from api.fields import Hex2NameColor
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from drf_extra_fields.fields import Base64ImageField
+from api.fields import Base64ImageField
 from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                            ShoppingCart, Tag)
 from rest_framework import serializers
