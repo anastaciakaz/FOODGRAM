@@ -1,4 +1,4 @@
-from api.fields import Hex2NameColor, Base64ImageField
+from api.fields import Base64ImageField, Hex2NameColor
 from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from recipe.models import (Favorite, Ingredient, IngredientAmount, Recipe,
