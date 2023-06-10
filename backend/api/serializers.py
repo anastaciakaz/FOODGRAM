@@ -98,9 +98,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 class IngredientsAddSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления ингредиента в рецептах."""
 
-    id = serializers.SlugRelatedField(
-        queryset=Ingredient.objects.all(), slug_field='id'
-    )
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -165,7 +163,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
-    author = UserSerializer(read_only=True)
     image = Base64ImageField()
     cooking_time = serializers.IntegerField()
 
@@ -215,45 +212,38 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 )
         return ingredients
 
-    def add_ingredients(self, ingredients, recipe):
+    def add_ingredients_tags(self, ingredients, tags, recipe):
         """
         Метод для добавления ингредиентов и их количества в рецепт.
         """
+        recipe.tags.set(tags)
         IngredientAmount.objects.bulk_create([IngredientAmount(
             recipe=recipe,
             ingredient_id=ingredient.get('id'),
             amount=ingredient.get('amount')
         ) for ingredient in ingredients])
+        return recipe
 
     def create(self, validated_data):
         """Метод переодпределния создания рецепта."""
-        image = validated_data.pop('image')
-        ingredients_data = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(image=image, **validated_data)
-        tags_data = self.initial_data.get('tags')
-        recipe.tags.set(tags_data)
-        self.add_ingredients(ingredients_data, recipe)
+        user = self.context['request'].user
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+        recipe = Recipe.objects.create(author=user, **validated_data)
+        self.add_ingredients_and_tags(ingredients, tags, recipe)
         return recipe
 
-    def update(self, instance, validated_data):
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get(
-            'cooking_time', instance.cooking_time
-        )
-        instance.tags.clear()
-        tags_data = self.initial_data.get('tags')
-        instance.tags.set(tags_data)
-        IngredientAmount.objects.filter(recipe=instance).all().delete()
-        self.create_ingredients(validated_data.get('ingredients'), instance)
-        instance.save()
-        return instance
+    def update(self, recipe, validated_data):
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+        recipe.tags.clear()
+        recipe.ingredients.clear()
+        self.add_ingredients_and_tags(ingredients, tags, recipe)
+        return super().update(recipe, validated_data)
 
     def to_representation(self, instance):
         """Метод для отображения рецепта после создания или измененния."""
-        request = self.context.get('request')
-        context = {'request': request}
+        context = {'request': self.context['request']}
         return RecipeReadSerializer(instance, context=context).data
 
 
@@ -284,13 +274,6 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
-    def get_is_subscribed(self, obj):
-        """Статус подписки на автора."""
-        user = self.context.get('request').user
-        return Subscriptions.objects.filter(
-            user=user, author=obj.author
-        ).exists()
-
     def get_recipes(self, obj):
         """Получение списка рецептов автора."""
         request = self.context['request']
@@ -298,7 +281,14 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         queryset = Recipe.objects.filter(author=obj.author)
         if limit:
             queryset = queryset[:int(limit)]
-        return RecipeReadSerializer(queryset, many=True).data
+        return RecipeShortSerializer(queryset, many=True).data
+
+    def get_is_subscribed(self, obj):
+        """Статус подписки на автора."""
+        user = self.context.get('request').user
+        return Subscriptions.objects.filter(
+            user=user, author=obj.author
+        ).exists()
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
