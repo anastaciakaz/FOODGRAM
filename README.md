@@ -35,13 +35,13 @@
 
 ``` docker-compose exec backend python manage.py makemigrations ```
 
-``` docker-compose backend web python manage.py migrate ```
+``` docker-compose backend python manage.py migrate ```
 
-``` docker-compose backend web python manage.py collectstatic --no-input ```
+``` docker-compose backend python manage.py collectstatic --no-input ```
 
 Создать суперпользователя:
 
-``` docker-compose backend web python manage.py createsuperuser ```
+``` docker-compose backend python manage.py createsuperuser ```
 
 Наполните базу данных ингредиентами и тегами. Выполняйте команду из дериктории где находится файл manage.py:
 
