@@ -113,7 +113,7 @@ class IngredientsAddSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра рецепта."""
 
-    tag = TagSerializer(read_only=True, many=True)
+    tags = TagSerializer(read_only=True, many=True)
     author = UserSerializer(read_only=True, many=False)
     ingredients = serializers.SerializerMethodField()
     is_favorited = SerializerMethodField()
