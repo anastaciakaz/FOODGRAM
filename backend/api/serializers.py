@@ -93,6 +93,11 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         model = IngredientAmount
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['id'] = instance.ingredient.id
+        return data
+
 
 class IngredientsAddSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления ингредиента в рецептах."""
@@ -164,7 +169,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('ingredients', 'tags', 'name',
+        fields = ('id', 'ingredients', 'tags', 'name',
                   'image', 'text', 'cooking_time')
 
     def validate_tags(self, tags):
@@ -215,7 +220,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         IngredientAmount.objects.bulk_create([IngredientAmount(
             recipe=recipe,
-            ingredient_id=ingredient.get('id'),
+            ingredient=ingredient.get('id'),
             amount=ingredient.get('amount')
         ) for ingredient in ingredients])
         return recipe
