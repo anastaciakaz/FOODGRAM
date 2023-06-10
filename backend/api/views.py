@@ -149,7 +149,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     @action(detail=True,
-            methods=['post', 'delete'],
+            methods=['get', 'delete'],
             permission_classes=(IsAuthenticated, ))
     def favorite(self, request, id=None):
         """Добавление и удаление рецептов из избранного."""
@@ -158,7 +158,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return self.delete_recipe(Favorite, request.user, id)
 
     @action(detail=True,
-            methods=['post', 'delete'],
+            methods=['get', 'delete'],
             permission_classes=(IsAuthenticated, ))
     def shopping_cart(self, request, id=None):
         """Добавление и удаление рецептов из корзины."""
