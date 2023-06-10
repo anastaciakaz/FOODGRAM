@@ -1,9 +1,10 @@
+from io import BytesIO
+
 from django.http import FileResponse
+from recipe.models import IngredientAmount
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from recipe.models import IngredientAmount
-from io import BytesIO
 
 
 def download_shopping_list(request):
