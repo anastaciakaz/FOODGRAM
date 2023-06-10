@@ -123,7 +123,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'name', 'tags', 'ingrediant', 'image',
+            'id', 'name', 'tags', 'ingredient', 'image',
             'text', 'cooking_time', 'is_favorited',
             'is_in_shopping_cart', 'author'
         )
