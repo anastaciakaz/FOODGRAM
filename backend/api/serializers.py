@@ -122,12 +122,9 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
-
-    def get_ingredients(self, obj: Recipe):
-        """Получает ингридиенты для рецепта."""
-        ingredients = IngredientAmount.objects.filter(recipe=obj).all()
-        return RecipeReadSerializer(ingredients, many=True).data
+        fields = ('id', 'tags', 'author', 'ingredient',
+                  'is_favorited', 'is_in_shopping_cart',
+                  'name', 'image', 'text', 'cooking_time')
 
     def get_is_favorited(self, recipe):
         """
