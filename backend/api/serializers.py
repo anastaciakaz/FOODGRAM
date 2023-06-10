@@ -119,7 +119,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = (
             'id', 'name', 'tags', 'ingrediants', 'image',
-            'description', 'pub_date', 'cooking_time', 'is_favorited',
+            'description', 'cooking_time', 'is_favorited',
             'is_in_shopping_cart', 'author'
         )
 
