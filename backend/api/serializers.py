@@ -115,7 +115,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(read_only=True, many=True)
     author = UserSerializer(read_only=True, many=False)
-    ingredients = serializers.SerializerMethodField()
+    ingredient = serializers.SerializerMethodField()
     is_favorited = SerializerMethodField()
     is_in_shopping_cart = SerializerMethodField()
     image = Base64ImageField()
@@ -123,7 +123,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'name', 'tags', 'ingrediants', 'image',
+            'id', 'name', 'tags', 'ingrediant', 'image',
             'text', 'cooking_time', 'is_favorited',
             'is_in_shopping_cart', 'author'
         )
