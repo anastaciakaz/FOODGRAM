@@ -6,7 +6,6 @@ from recipe.models import (Ingredient, IngredientAmount, Recipe, ShoppingCart,
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueValidator
-# from users.models import Subscriptions
 
 User = get_user_model()
 
