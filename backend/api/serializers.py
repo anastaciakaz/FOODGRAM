@@ -6,7 +6,6 @@ from recipe.models import (Ingredient, IngredientAmount, Recipe, ShoppingCart,
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueValidator
-from users.models import Subscriptions
 
 User = get_user_model()
 
@@ -102,8 +101,7 @@ class SubscriptionsSerializer(UserSerializer):
             queryset = Recipe.objects.filter(author=user)[:int(limit)]
         else:
             queryset = user.recipe
-        recipes = RecipeShortSerializer(queryset, many=True).data
-        return recipes
+        return RecipeShortSerializer(queryset, many=True).data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -283,5 +281,3 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         """Метод для отображения рецепта после создания или измененния."""
         context = {'request': self.context['request']}
         return RecipeReadSerializer(instance, context=context).data
-
-
