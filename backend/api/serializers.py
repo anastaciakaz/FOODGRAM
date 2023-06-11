@@ -74,10 +74,12 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 class SubscriptionsSerializer(UserSerializer):
     """Сериализатор для получения списка подписок."""
 
-    recipes_count = SerializerMethodField(source='get_recipes')
-    recipes = SerializerMethodField(source='get_recipes_count')
+    recipes_count = serializers.IntegerField(source='recipes.count',
+                                             read_only=True)
+    recipes = SerializerMethodField(method_name='get_recipes')
+    is_subscribed = serializers.BooleanField(default=True)
 
-    class Meta():
+    class Meta:
         model = User
         fields = ('id', 'email', 'username', 'first_name',
                   'last_name', 'recipes_count', 'recipes',
