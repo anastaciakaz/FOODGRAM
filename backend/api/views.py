@@ -67,12 +67,9 @@ class CustomUserViewSet(UserViewSet):
                     {'error_message': f'Вы уже подписаны на {author}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            subscriber = Subscriptions.objects.create(
-                user=user, author=author
-            )
-            serializer = SubscriptionsSerializer(
-                subscriber, context={'request': request}
-            )
+            if not user.id == author.id:
+                Subscriptions.objects.create(user=user, author=author)
+            serializer = UserSerializer(author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             if not Subscriptions.objects.filter(

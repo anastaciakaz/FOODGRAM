@@ -74,14 +74,19 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 class SubscriptionsSerializer(UserSerializer):
     """Сериализатор для получения списка подписок."""
 
-    recipes_count = SerializerMethodField()
-    recipes = SerializerMethodField()
+    recipes_count = SerializerMethodField(source='get_recipes')
+    recipes = SerializerMethodField(source='get_recipes_count')
 
-    class Meta(UserSerializer.Meta):
-        fields = UserSerializer.Meta.fields + ('recipes', 'recipes_count')
+    class Meta():
+        model = User
+        fields = ('id', 'email', 'username', 'first_name',
+                  'last_name', 'recipes_count', 'recipes',
+                  'is_subscribed')
+        read_only_fields = ('email', 'username',
+                            'first_name', 'last_name')
 
-    def get_recipes_count(self, author):
-        return Recipe.objects.filter(author=author).count()
+    def get_recipes_count(self, user):
+        return user.recipes.count()
 
     def get_recipes(self, user):
         limit = self.context['request'].query_params.get('recipes_limit')
