@@ -68,7 +68,7 @@ class CustomUserViewSet(UserViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             subscriber = Subscriptions.objects.create(
-                user=request.user, author=author
+                user=user, author=author
             )
             serializer = SubscriptionsSerializer(
                 subscriber, context={'request': request}
@@ -76,7 +76,7 @@ class CustomUserViewSet(UserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if request.method == 'DELETE':
             if not Subscriptions.objects.filter(
-                user=request.user, author=author
+                user=user, author=author
             ).exists():
                 return Response({'errors': 'Вы не подписаны'},
                                 status=status.HTTP_400_BAD_REQUEST)
