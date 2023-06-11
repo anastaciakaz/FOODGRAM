@@ -23,9 +23,9 @@ def download_shopping_list(request):
             shopping_list[name]['amount'] += item[2]
     height = 700
     buffer = BytesIO()
-    pdfmetrics.registerFont(TTFont('arial', 'static/arial.ttf'))
+    pdfmetrics.registerFont(TTFont('FreeSans', 'fonts/FreeSans.ttf'))
     page = canvas.Canvas(buffer)
-    page.setFont('arial', 13)
+    page.setFont('FreeSans', 13)
     page.drawString(200, 800, "Список покупок")
     for i, (name, data) in enumerate(shopping_list.items(), 1):
         page.drawString(75, height, (f"<{i}> {name} - {data['amount']}, "
