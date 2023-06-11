@@ -76,21 +76,9 @@ class SubscriptionsSerializer(UserSerializer):
 
     recipes_count = SerializerMethodField()
     recipes = SerializerMethodField()
-    is_subscribed = SerializerMethodField()
 
-    class Meta:
-        model = User
-        fields = ('id', 'email', 'username', 'first_name',
-                  'last_name', 'recipes_count', 'recipes',
-                  'is_subscribed')
-        read_only_fields = ('email', 'username',
-                            'first_name', 'last_name')
-
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return user.subscriptions.filter(pk=obj.pk).exists()
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ('recipes', 'recipes_count')
 
     def get_recipes_count(self, author):
         return Recipe.objects.filter(author=author).count()
