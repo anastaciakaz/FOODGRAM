@@ -77,7 +77,7 @@ class SubscriptionsSerializer(UserSerializer):
     recipes_count = serializers.IntegerField(source='recipes.count',
                                              read_only=True)
     recipes = SerializerMethodField(method_name='get_recipes')
-    is_subscribed = serializers.BooleanField(default=True)
+    is_subscribed = SerializerMethodField(method_name='get_is_subscribed')
 
     class Meta:
         model = User
@@ -97,6 +97,12 @@ class SubscriptionsSerializer(UserSerializer):
         else:
             queryset = obj.recipes
         return RecipeShortSerializer(queryset, many=True).data
+    
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return user.subscriptions.filter(pk=obj.pk).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
