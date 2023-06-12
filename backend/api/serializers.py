@@ -6,6 +6,7 @@ from recipe.models import (Ingredient, IngredientAmount, Recipe, ShoppingCart,
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueValidator
+from users.models import Subscriptions
 
 User = get_user_model()
 
@@ -54,11 +55,11 @@ class UserSerializer(UserSerializer):
             'is_subscribed'
         )
 
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return user.subscriptions.filter(pk=obj.pk).exists()
+    def get_is_subscribed(self, author):
+        if Subscriptions.objects.filter(author=author,
+                                 user=self.context['request'].user).exists():
+            return True
+        return False
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
@@ -98,11 +99,12 @@ class SubscriptionsSerializer(UserSerializer):
             queryset = obj.recipes
         return RecipeShortSerializer(queryset, many=True).data
 
-    def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return user.subscriptions.filter(pk=obj.pk).exists()
+    def get_is_subscribed(self, author):
+        if Subscriptions.objects.filter(
+            author=author, user=self.context['request'].user
+        ).exists():
+            return True
+        return False
 
 
 class TagSerializer(serializers.ModelSerializer):
