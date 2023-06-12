@@ -97,7 +97,7 @@ class SubscriptionsSerializer(UserSerializer):
         else:
             queryset = obj.recipes
         return RecipeShortSerializer(queryset, many=True).data
-    
+
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if user.is_anonymous:
