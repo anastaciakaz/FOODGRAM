@@ -1,8 +1,7 @@
 # Foodgram
-### Это удобный и красивый сервис для обмена интересными рецептами. Пользователи могут публиковать свои собственные рецепты и следить за обновлениями других пользователей, а на самых любимых авторов можно подписаться, чтобы не упускать обновлений!
-## Стек технологий
+### It's an simple, comfortable and beautiful service for exchanging recipes. Users can post their own recipes and follow other users for updates, and you can follow your favorite authors to stay updated!
+## Technology stack:
 - Python
-- Django
 - Django REST Framework
 - Docker
 - Docker-compose
@@ -10,7 +9,7 @@
 
 [![foodgram_workflow](https://github.com/anastaciakaz/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=master)](https://github.com/anastaciakaz/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
 
-## Проект доступен по ссылкам:
+## The project is available via the links:
 
 ``` foodgram-projreact.ddns.net ``` 
 
@@ -18,20 +17,20 @@
 ```http://158.160.105.204/admin/```
 ```http://158.160.105.204/api/docs```
 
-## Подготовка и запуск проекта
-Склонировать репозиторий на локально:
+## Preparation and launch of the project:
+Clone the repository locally:
 
 ```git clone git@github.com:anastaciakaz/foodgram-project-react.git ```
 
-Перейти в репозиторий с docker-compose файлом, используя терминал:
+Go to repository with docker-compose file using terminal:
 
 ```cd infra/```
 
-Развернуть докер-контейнеры:
+Build containers:
 
 ``` docker-compose up -d --build ```
 
-Выполнить миграции и собрать статику:
+Run migrations and collect static:
 
 ``` docker-compose exec backend python manage.py makemigrations ```
 
@@ -39,55 +38,55 @@
 
 ``` docker-compose backend python manage.py collectstatic --no-input ```
 
-Создать суперпользователя:
+Create a superuser:
 
 ``` docker-compose backend python manage.py createsuperuser ```
 
-Наполните базу данных ингредиентами и тегами. Выполняйте команду из дериктории где находится файл manage.py:
+Load data into database. Run the command from the directory where the manage.py file is located:
 
 ```docker-compose exec backend python manage.py load_data```
 
-## Для работы с удаленным сервером (на ubuntu):
-- Выполните вход на свой удаленный сервер.
-- Установите docker на сервер:
+## To work with a remote server (ubuntu):
+- Log in to your remote server.
+- Set up docker on your remote server:
 
 ```sudo apt install docker.io ```
 
-- Установите docker-compose на сервер:
+- Set up docker-compose on your remote server:
 
 ```sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose```
 
 ```sudo chmod +x /usr/local/bin/docker-compose ```
 
-- Локально отредактируйте файл infra/nginx.conf и в строке server_name впишите свой IP.
+- Edit 'infra/nginx.conf' file locally and type your IP in the server_name line.
 
-- Скопируйте файлы docker-compose.yml и nginx.conf из директории infra на сервер:
+- Cope files 'docker-compose.yml' and 'nginx.conf' to your server from 'infra' directory:
 
 ```scp docker-compose.yml <username>@<host>:/home/<username>/docker-compose.yml ```
 
 ```scp nginx.conf <username>@<host>:/home/<username>/nginx.conf ```
 
-- Предварительно выключите nginx на сервере.
+- Do not forget to stop nginx on your server before executing these commands:
 
 ``` sudo systemctl stop nginx ```
 
-- Cоздайте .env файл с данными:
+- Create '.env' file with your data:
 
 ```
 DB_ENGINE=<django.db.backends.postgresql>
-DB_NAME=<имя базы данных postgres>
-DB_USER=<пользователь бд>
-DB_PASSWORD=<пароль>
+DB_NAME=<postgres database name>
+DB_USER=<database user>
+DB_PASSWORD=<password>
 DB_HOST=<db>
 DB_PORT=<5432>
-SECRET_KEY=<секретный ключ проекта django>
+SECRET_KEY=<django project secret key>
 ```
 
-- Для работы с Workflow добавьте в Secrets GitHub переменные окружения для работы в директории infra/.
+- For working with Workflow add environmental variables (from '/infra' directory) to Secrets GitHub.
 
-## Примеры запросов:
+## Request examples:
 
-POST (Создание рецепта, эндпоинт: http://127.0.0.1:8000/api/recipes/)
+POST (Recipe creating, endpoint: http://127.0.0.1:8000/api/recipes/)
 Request:
 ``` 
 {
@@ -125,8 +124,8 @@ Response:
     "email": "user@example.com",
     "id": 0,
     "username": "string",
-    "first_name": "Вася",
-    "last_name": "Пупкин",
+    "first_name": "Dave",
+    "last_name": "Jones",
     "is_subscribed": false
   },
   "ingredients": [
@@ -146,7 +145,7 @@ Response:
 }
 ```
 
-POST (Подписка на пользователя: http://127.0.0.1:8000/api/users/{id}/subscribe/):
+POST (To subscribe: http://127.0.0.1:8000/api/users/{id}/subscribe/):
 Response:
 
 ```
@@ -154,8 +153,8 @@ Response:
   "email": "user@example.com",
   "id": 0,
   "username": "string",
-  "first_name": "Вася",
-  "last_name": "Пупкин",
+  "first_name": "Dave",
+  "last_name": "Jones",
   "is_subscribed": true,
   "recipes": [
     {
@@ -168,7 +167,7 @@ Response:
   "recipes_count": 0
 }
 ```
-- Локально Документация доступна по адресу:
+- Documentation (local access):
 
 ```
 http://127.0.0.1/api/docs/
