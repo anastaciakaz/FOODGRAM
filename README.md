@@ -20,7 +20,7 @@
 ## Preparation and launch of the project:
 Clone the repository locally:
 
-```git clone git@github.com:anastaciakaz/foodgram-project-react.git ```
+```git@github.com:anastaciakaz/FOODGRAM.git ```
 
 Go to repository with docker-compose file using terminal:
 
