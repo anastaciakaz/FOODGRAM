@@ -1,5 +1,5 @@
 # Foodgram
-### It's an simple, comfortable and beautiful service for exchanging recipes. Users can post their own recipes and follow other users for updates, and you can follow your favorite authors to stay updated!
+### It's an easy and beautiful service for exchanging recipes. Users can post their own recipes and follow other users for updates, and you can follow your favorite authors to stay updated!
 ## Technology stack:
 - Python
 - Django REST Framework
